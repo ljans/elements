@@ -3,7 +3,7 @@
  * JS micro-templating engine
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
- * https://github.com/Luniversity/elements
+ * https://github.com/Luniverse/elements-js
  */
 class Elements {
 	
