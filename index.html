@@ -58,14 +58,70 @@
 		
 		
 		document.write(Elements.render(`
-			<h1>Dot iterator</h1>
+			<h1>Cascading</h1>
 			{{my.super.deep.var}}
 		`, {'my': {'super': {'deep': {'var': 'test'}}}}));
 		
 		
+		document.write(Elements.render(`
+			<h1>Context cases</h1>
+			<table border="1">
+				<tr>
+					<th>Context</th>
+					<th>value</th>
+					<th>.</th>
+					<th>..value</th>
+				</tr>
+				<tr>
+					<td>Global</td>
+					<td>{{value}}</td>
+					<td>{{.}}</td>
+					<td>{{..value}}</td>
+				</tr>
+				<tr>
+					{{#value}}
+						<td>Scalar</td>
+						<td>{{value}}</td>
+						<td>{{.}}</td>
+						<td>{{..value}}</td>
+					{{/value}}
+				</tr>
+				<tr>
+					{{#hash}}
+						<td>Hash</td>
+						<td>{{value}}</td>
+						<td>{{.}}</td>
+						<td>{{..value}}</td>
+					{{/hash}}
+				</tr>
+				<tr>
+					{{#hashList}}
+						<td>Hash list</td>
+						<td>{{value}}</td>
+						<td>{{.}}</td>
+						<td>{{..value}}</td>
+					{{/hashList}}
+				</tr>
+				<tr>
+					{{#scalarList}}
+						<td>Scalar list</td>
+						<td>{{value}}</td>
+						<td>{{.}}</td>
+						<td>{{..value}}</td>
+					{{/scalarList}}
+				</tr>
+			</table>
+		`, {
+			value: 'global',
+			hash: {value: 'hash'},
+			hashList: [{value: 'hash list'}],
+			scalarList: ['scalar list']
+		}));
+		
+		
 		const test = new Elements(`
 			<h1>Custom settings</h1>
-			((F))
+			((l)), ((F))
 		`, {
 			'open': '\\(\\(',
 			'close': '\\)\\)',
@@ -75,7 +131,7 @@
 		document.write(test.render(new Date()));
 		
 		
-		let content = '<h1>Date object in direct feed</h1><table border="1px"><tr><th>Sign</th><th>Value</th></tr>';
+		let content = '<h1>Date object</h1><table border="1px"><tr><th>Sign</th><th>Value</th></tr>';
 		for(let fragment of ['d','D','j','l','N','S','w','z','W','F','m','M','n','t','L','o','Y','y','a','A','B','g','G','h','H','i','s','u','v','e','I','O','P','T','Z','z','c','r','U']) {
 			content+= `<tr><td>${fragment}</td><td>{{${fragment}}}</td></tr>`;
 		}

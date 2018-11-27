@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v2.1
+ * Luniverse Elements v2.2
  * ES2017 micro-templating engine
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
@@ -36,12 +36,12 @@ class Elements {
 
 	// Render data
 	render(data) {
-		const template = this.renderElement(data, this.template);
+		const template = this.renderElement(this.template, data);
 		return this.clean(template);
 	}
 
 	// Render sections
-	renderSections(data, template) {
+	renderSections(template, data) {
 		
 		// Match regex
 		const pattern = new RegExp(this.settings.open+'(\\^|#)(.+?)'+this.settings.close+'((?:\\s|\\S)+?)'+this.settings.open+'\/\\2'+this.settings.close, 'g');
@@ -51,10 +51,10 @@ class Elements {
 			const value = data[key];
 	
 			// Render value for normal section with non-empty value
-			if(type == '#' && !this.empty(value)) return this.renderElement(value, content, data);
+			if(type == '#' && !this.empty(value)) return this.renderElement(content, value, data);
 	
 			// Adopt content for inverted section with empty value
-			if(type == '^' && this.empty(value)) return this.renderRecursive(data, content);
+			if(type == '^' && this.empty(value)) return this.renderRecursive(content, data);
 			
 			// Skip content in other cases
 			return '';
@@ -62,7 +62,7 @@ class Elements {
 	}
 			
 	// Render variables
-	renderVariables(data, template, prefix='') {
+	renderVariables(template, data, prefix='') {
 		
 		// Skip arrays
 		if(data instanceof Array) return template;
@@ -71,7 +71,7 @@ class Elements {
 		for(const [key, value] of Object.entries(data)) {
 			
 			// Render next dimension of hash with prefix
-			if(value instanceof Object) template = this.renderVariables(value, template, prefix+key+'.');
+			if(value instanceof Object) template = this.renderVariables(template, value, prefix+key+'.');
 			
 			// Render scalar value
 			else {
@@ -83,41 +83,41 @@ class Elements {
 	}	
 	
 	// Render element
-	renderElement(element, template, context={}) {
+	renderElement(template, element, context={}) {
 		
 		// Call lambda
 		if(element instanceof Function) return element(template);
 		
 		// Render list
-		if(element instanceof Array) return this.renderList(element, template, context);
+		if(element instanceof Array) return this.renderList(template, element, context);
 		
 		// Render date
-		if(element instanceof Date) return this.renderDate(element, template);
+		if(element instanceof Date) return this.renderDate(template, element);
 	
 		// Render hash with local context extended by inherited context
-		if(element instanceof Object) return this.renderRecursive(Object.assign({'.': context}, element), template);
+		if(element instanceof Object) return this.renderRecursive(template, Object.assign({'.': context}, element));
 		
 		// Render scalar list item with local context
-		if(context instanceof Array) return this.renderRecursive({'.': element}, template);
+		if(context instanceof Array) return this.renderRecursive(template, {'.': element});
 		
 		// Render scalar hash item with inherited context extended by local context
-		if(context instanceof Object) return this.renderRecursive(Object.assign(context, {'.': element}), template);
+		if(context instanceof Object) return this.renderRecursive(template, Object.assign({}, context, {'.': element}));
 	}
 
 	// Recursive renderer
-	renderRecursive(data, template) {
-		template = this.renderSections(data, template);
-		template = this.renderVariables(data, template);
+	renderRecursive(template, data) {
+		template = this.renderSections(template, data);
+		template = this.renderVariables(template, data);
 		return template;
 	}
 	
 	// Map list on template
-	renderList(list, template, context) {
-		return list.map(element => this.renderElement(element, template, context)).join('');
+	renderList(template, list, context) {
+		return list.map(element => this.renderElement(template, element, context)).join('');
 	}
 	
 	// Render date
-	renderDate(date, template) {
+	renderDate(template, date) {
 		const f = {};
 		
 		// Setup native fragments
@@ -142,7 +142,7 @@ class Elements {
 		f.M = f.F.substr(0,3);
 		
 		// Render fragments
-		return this.renderVariables(f, template);
+		return this.renderVariables(template, f);
 	}	
 }
 
