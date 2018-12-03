@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v2.2
+ * Luniverse Elements v2.3
  * ES2017 micro-templating engine
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
@@ -8,9 +8,17 @@
 class Elements {
 	
 	// Constructor
-	constructor(template, settings=Elements.settings) {
+	constructor(template, settings={}) {
 		this.template = template;
-		this.settings = settings;
+		this.open = this.escape(settings.open || Elements.open);
+		this.close = this.escape(settings.close || Elements.close);
+		this.days = settings.days || Elements.days;
+		this.months = settings.months || Elements.months;
+	}
+	
+	// Escape regex pattern
+	escape(pattern) {
+		return pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	}
 	
 	// Check whether value is considered as empty
@@ -25,7 +33,7 @@ class Elements {
 	
 	// Clean comments and whitespace
 	clean(template) {
-		const pattern = new RegExp(this.settings.open+'!.+?'+this.settings.close, 'g');
+		const pattern = new RegExp(this.open+'!.+?'+this.close, 'g');
 		return template.replace(pattern, '').replace(/[\r\n\t]/g, '');
 	}
 	
@@ -44,7 +52,7 @@ class Elements {
 	renderSections(template, data) {
 		
 		// Match regex
-		const pattern = new RegExp(this.settings.open+'(\\^|#)(.+?)'+this.settings.close+'((?:\\s|\\S)+?)'+this.settings.open+'\/\\2'+this.settings.close, 'g');
+		const pattern = new RegExp(this.open+'(\\^|#)(.+?)'+this.close+'((?:\\s|\\S)+?)'+this.open+'\/\\2'+this.close, 'g');
 		return template.replace(pattern, ($null, type, key, content) => {
 			
 			// Determine value
@@ -75,7 +83,7 @@ class Elements {
 			
 			// Render scalar value
 			else {
-				const pattern = new RegExp(this.settings.open + prefix + key + this.settings.close, 'g');
+				const pattern = new RegExp(this.open + this.escape(prefix + key) + this.close, 'g');
 				template = template.replace(pattern, value);
 			}
 		}
@@ -124,7 +132,7 @@ class Elements {
 		f.j = date.getDate();
 		f.w = date.getDay();
 		f.n = date.getMonth() + 1;
-		f.F = this.settings.months[date.getMonth()];
+		f.F = this.months[date.getMonth()];
 		f.Y = date.getFullYear();
 		f.G = date.getHours();
 		f.i = this.zero(date.getMinutes());
@@ -134,7 +142,7 @@ class Elements {
 		// Add derived fragments
 		f.d = this.zero(f.j)
 		f.N = f.w + 1;
-		f.l = this.settings.days[f.w];
+		f.l = this.days[f.w];
 		f.m = this.zero(f.n);
 		f.H = this.zero(f.G);
 		f.U = Math.floor(f.v / 1000);
@@ -147,9 +155,7 @@ class Elements {
 }
 
 // Default settings
-Elements.settings = {
-	open: '{{',
-	close: '}}',
-	days: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
-	months: ['January','February','March','April','May','June','July','August','September','October','November','December']
-}
+Elements.open = '{{';
+Elements.close = '}}';
+Elements.days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+Elements.months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
