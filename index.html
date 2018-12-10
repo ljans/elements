@@ -59,8 +59,14 @@
 		
 		document.write(Elements.render(`
 			<h1>Cascading</h1>
-			{{my.super.deep.var}}
-		`, {'my': {'super': {'deep': {'var': 'test'}}}}));
+			<p>{{my.super.deep.var}}</p>
+			<p>{{hashList.length}}</p>
+			<p>{{scalarList.length}}</p>
+		`, {
+			'my': {'super': {'deep': {'var': 'test'}}},
+			'hashList': [{}, {}, {}],
+			'scalarList': [1, 2, 3, 4]
+		}));
 		
 		
 		document.write(Elements.render(`

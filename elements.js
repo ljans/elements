@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v2.3
+ * Luniverse Elements v2.4
  * ES2017 micro-templating engine
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
@@ -72,8 +72,8 @@ class Elements {
 	// Render variables
 	renderVariables(template, data, prefix='') {
 		
-		// Skip arrays
-		if(data instanceof Array) return template;
+		// Render size of list
+		if(data instanceof Array) data = {length: data.length};
 		
 		// Iterate over values
 		for(const [key, value] of Object.entries(data)) {
