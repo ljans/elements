@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v2.4
+ * Luniverse Elements v2.5
  * ES2017 micro-templating engine
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
@@ -21,9 +21,9 @@ class Elements {
 		return pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	}
 	
-	// Check whether value is considered as empty
+	// Check whether value is considered empty
 	empty(value) {
-		return !value || value instanceof Array && !value.length;
+		return !value || (value instanceof Array && !value.length) || (value instanceof Object && !Object.keys(value).length);
 	}
 	
 	// Add leading zero

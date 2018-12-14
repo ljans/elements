@@ -24,35 +24,44 @@
 					</tr>
 				{{/tests}}
 			</table>
-		`, {'tests': [{
-				'name': '\'test\'',
-				'value': 'test'
+		`, {tests: [{
+				name: '\'test\'',
+				value: 'test'
 			},{
-				'name': '\'\'',
-				'value': '',
+				name: '\'\'',
+				value: '',
 			},{
-				'name': '1',
-				'value': 1,
+				name: '1',
+				value: 1,
 			},{
-				'name': '0',
-				'value': 0,
+				name: '0',
+				value: 0,
 			},{
-				'name': 'true',
-				'value': true
+				name: 'true',
+				value: true
 			},{
-				'name': 'false',
-				'value': false
+				name: 'false',
+				value: false
 			},{
-				'name': '[\'a\', \'b\', \'c\']',
-				'value': ['a', 'b', 'c']
+				name: '[\'a\', \'b\', \'c\']',
+				value: ['a', 'b', 'c']
 			},{
-				'name': '[]',
-				'value': []
+				name: '[{\'.\': \'a\'}, {\'.\': \'b\'}]',
+				value: [{'.': 'a'}, {'.': 'b'}]
 			},{
-				'name': 'undefined',
+				name: '{\'.\': \'a\'}',
+				value: {'.': 'a'}
 			},{
-				'name': 'null',
-				'value': null
+				name: '[]',
+				value: []
+			},{
+				name: 'undefined',
+			},{
+				name: 'null',
+				value: null
+			},{
+				name: '{}',
+				value: {}
 			}]
 		}));	
 		
@@ -63,9 +72,9 @@
 			<p>{{hashList.length}}</p>
 			<p>{{scalarList.length}}</p>
 		`, {
-			'my': {'super': {'deep': {'var': 'test'}}},
-			'hashList': [{}, {}, {}],
-			'scalarList': [1, 2, 3, 4]
+			my: {super: {deep: {var: 'test'}}},
+			hashList: [{}, {}, {}],
+			scalarList: [1, 2, 3, 4]
 		}));
 		
 		
