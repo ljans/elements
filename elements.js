@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v2.6
+ * Luniverse Elements v2.7
  * ES2017 micro-templating engine
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
@@ -8,14 +8,9 @@
 class Elements {
 	
 	// Constructor
-	constructor(template, settings={}) {
+	constructor(template, config={}) {
 		this.template = template;
-		this.open = this.escape(settings.open || Elements.open);
-		this.close = this.escape(settings.close || Elements.close);
-		this.days = settings.days || Elements.days;
-		this.months = settings.months || Elements.months;
-		this.D = settings.D || Elements.D;
-		this.M = settings.M || Elements.M;
+		this.config = Object.assign({}, Elements.config, config);
 	}
 	
 	// Escape regex pattern
@@ -37,7 +32,7 @@ class Elements {
 	
 	// Clean comments and whitespace
 	clean(template) {
-		const pattern = new RegExp(this.open+'!.+?'+this.close, 'g');
+		const pattern = new RegExp(this.escape(this.config.open)+'!.+?'+this.escape(this.config.close), 'g');
 		return template.replace(pattern, '').replace(/[\r\n\t]/g, '');
 	}
 	
@@ -56,7 +51,7 @@ class Elements {
 	renderSections(template, data) {
 		
 		// Match regex
-		const pattern = new RegExp(this.open+'(\\^|#)(.+?)'+this.close+'((?:\\s|\\S)+?)'+this.open+'\/\\2'+this.close, 'g');
+		const pattern = new RegExp(this.escape(this.config.open)+'(\\^|#)(.+?)'+this.escape(this.config.close)+'((?:\\s|\\S)+?)'+this.escape(this.config.open)+'\/\\2'+this.escape(this.config.close), 'g');
 		return template.replace(pattern, ($null, type, key, content) => {
 			
 			// Determine value
@@ -87,7 +82,7 @@ class Elements {
 			
 			// Render scalar value
 			else {
-				const pattern = new RegExp(this.open + this.escape(prefix + key) + this.close, 'g');
+				const pattern = new RegExp(this.escape(this.config.open + prefix + key + this.config.close), 'g');
 				template = template.replace(pattern, value);
 			}
 		}
@@ -136,7 +131,7 @@ class Elements {
 		f.j = date.getDate();
 		f.w = date.getDay();
 		f.n = date.getMonth() + 1;
-		f.F = this.months[date.getMonth()];
+		f.F = this.config.months[date.getMonth()];
 		f.Y = date.getFullYear();
 		f.G = date.getHours();
 		f.i = this.zero(date.getMinutes());
@@ -146,22 +141,24 @@ class Elements {
 		// Add derived fragments
 		f.d = this.zero(f.j)
 		f.N = f.w + 1;
-		f.l = this.days[f.w];
+		f.l = this.config.days[f.w];
 		f.m = this.zero(f.n);
 		f.H = this.zero(f.G);
 		f.U = Math.floor(f.v / 1000);
-		f.D = f.l.substr(0, this.D);
-		f.M = f.F.substr(0, this.M);
+		f.D = f.l.substr(0, this.config.D);
+		f.M = f.F.substr(0, this.config.M);
 		
 		// Render fragments
 		return this.renderVariables(template, f);
 	}	
 }
 
-// Default settings
-Elements.open = '{{';
-Elements.close = '}}';
-Elements.D = 3;
-Elements.M = 3;
-Elements.days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-Elements.months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+// Default configuration
+Elements.config = {
+	D: 3,
+	M: 3,
+	open: '{{',
+	close: '}}',
+	days: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+	months: ['January','February','March','April','May','June','July','August','September','October','November','December']
+}

@@ -135,13 +135,13 @@
 		
 		
 		const test = new Elements(`
-			<h1>Custom settings</h1>
+			<h1>Custom configuration</h1>
 			((l)), ((F))
 		`, {
-			'open': '((',
-			'close': '))',
-			'months': ['A','B','C','D','E','F','G','H','I','J','K','L'],
-			'days': ['A','B','C','D','E','F','G']
+			open: '((',
+			close: '))',
+			months: ['A','B','C','D','E','F','G','H','I','J','K','L'],
+			days: ['A','B','C','D','E','F','G']
 		});
 		document.write(test.render(new Date()));
 		
