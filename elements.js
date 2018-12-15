@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v2.5
+ * Luniverse Elements v2.6
  * ES2017 micro-templating engine
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
@@ -14,6 +14,8 @@ class Elements {
 		this.close = this.escape(settings.close || Elements.close);
 		this.days = settings.days || Elements.days;
 		this.months = settings.months || Elements.months;
+		this.D = settings.D || Elements.D;
+		this.M = settings.M || Elements.M;
 	}
 	
 	// Escape regex pattern
@@ -23,7 +25,9 @@ class Elements {
 	
 	// Check whether value is considered empty
 	empty(value) {
-		return !value || (value instanceof Array && !value.length) || (value instanceof Object && !Object.keys(value).length);
+		if(value instanceof Function || value instanceof Date) return false;
+		if(value instanceof Object) return Object.keys(value).length == 0;
+		return !value;
 	}
 	
 	// Add leading zero
@@ -146,8 +150,8 @@ class Elements {
 		f.m = this.zero(f.n);
 		f.H = this.zero(f.G);
 		f.U = Math.floor(f.v / 1000);
-		f.D = f.l.substr(0,3);
-		f.M = f.F.substr(0,3);
+		f.D = f.l.substr(0, this.D);
+		f.M = f.F.substr(0, this.M);
 		
 		// Render fragments
 		return this.renderVariables(template, f);
@@ -157,5 +161,7 @@ class Elements {
 // Default settings
 Elements.open = '{{';
 Elements.close = '}}';
+Elements.D = 3;
+Elements.M = 3;
 Elements.days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 Elements.months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
