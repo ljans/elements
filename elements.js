@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v2.8
+ * Luniverse Elements v2.9
  * ES2017 micro-templating engine
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
@@ -23,11 +23,6 @@ class Elements {
 		if(value instanceof Function || value instanceof Date) return false;
 		if(value instanceof Object) return Object.keys(value).length == 0;
 		return !value;
-	}
-	
-	// Add leading zero
-	zero(number) {
-		return number < 10 ? '0'+number : number;
 	}
 	
 	// Clean comments and whitespace
@@ -132,16 +127,16 @@ class Elements {
 		f.F = this.config.months[date.getMonth()];
 		f.Y = date.getFullYear();
 		f.G = date.getHours();
-		f.i = this.zero(date.getMinutes());
-		f.s = this.zero(date.getSeconds());
+		f.i = date.getMinutes().toString().padStart(2, 0);
+		f.s = date.getSeconds().toString().padStart(2, 0);
 		f.v = date.getTime();
 		
 		// Add derived fragments
-		f.d = this.zero(f.j)
+		f.d = f.j.toString().padStart(2, 0);
 		f.N = f.w + 1;
 		f.l = this.config.days[f.w];
-		f.m = this.zero(f.n);
-		f.H = this.zero(f.G);
+		f.m = f.n.toString().padStart(2, 0);
+		f.H = f.G.toString().padStart(2, 0);
 		f.U = Math.floor(f.v / 1000);
 		f.D = f.l.substr(0, this.config.D);
 		f.M = f.F.substr(0, this.config.M);
