@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v2.7
+ * Luniverse Elements v2.8
  * ES2017 micro-templating engine
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
@@ -96,31 +96,29 @@ class Elements {
 		if(element instanceof Function) return element(template);
 		
 		// Render list
-		if(element instanceof Array) return this.renderList(template, element, context);
+		if(element instanceof Array) return this.renderList(template, element);
 		
 		// Render date
 		if(element instanceof Date) return this.renderDate(template, element);
 	
-		// Render hash with local context extended by inherited context
-		if(element instanceof Object) return this.renderRecursive(template, Object.assign({'.': context}, element));
+		// Render hash
+		if(element instanceof Object) return this.renderRecursive(template, element);
 		
-		// Render scalar list item with local context
+		// Render scalar item (of list or hash)
 		if(context instanceof Array) return this.renderRecursive(template, {'.': element});
-		
-		// Render scalar hash item with inherited context extended by local context
-		if(context instanceof Object) return this.renderRecursive(template, Object.assign({}, context, {'.': element}));
+		if(context instanceof Object) return this.renderRecursive(template, Object.assign({'.': element}, context));
 	}
 
 	// Recursive renderer
 	renderRecursive(template, data) {
-		template = this.renderSections(template, data);
 		template = this.renderVariables(template, data);
+		template = this.renderSections(template, data);
 		return template;
 	}
 	
 	// Map list on template
-	renderList(template, list, context) {
-		return list.map(element => this.renderElement(template, element, context)).join('');
+	renderList(template, list) {
+		return list.map(element => this.renderElement(template, element, list)).join('');
 	}
 	
 	// Render date
