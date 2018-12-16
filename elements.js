@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v2.9
+ * Luniverse Elements v2.10
  * ES2017 micro-templating engine
  * Licensed under the MIT license
  * Copyright (c) 2018 Lukas Jans
@@ -118,31 +118,30 @@ class Elements {
 	
 	// Render date
 	renderDate(template, date) {
-		const f = {};
 		
 		// Setup native fragments
-		f.j = date.getDate();
-		f.w = date.getDay();
-		f.n = date.getMonth() + 1;
-		f.F = this.config.months[date.getMonth()];
-		f.Y = date.getFullYear();
-		f.G = date.getHours();
-		f.i = date.getMinutes().toString().padStart(2, 0);
-		f.s = date.getSeconds().toString().padStart(2, 0);
-		f.v = date.getTime();
+		date.j = date.getDate();
+		date.w = date.getDay();
+		date.n = date.getMonth() + 1;
+		date.F = this.config.months[date.getMonth()];
+		date.Y = date.getFullYear();
+		date.G = date.getHours();
+		date.i = date.getMinutes().toString().padStart(2, 0);
+		date.s = date.getSeconds().toString().padStart(2, 0);
+		date.v = date.getTime();
 		
 		// Add derived fragments
-		f.d = f.j.toString().padStart(2, 0);
-		f.N = f.w + 1;
-		f.l = this.config.days[f.w];
-		f.m = f.n.toString().padStart(2, 0);
-		f.H = f.G.toString().padStart(2, 0);
-		f.U = Math.floor(f.v / 1000);
-		f.D = f.l.substr(0, this.config.D);
-		f.M = f.F.substr(0, this.config.M);
+		date.d = date.j.toString().padStart(2, 0);
+		date.N = date.w + 1;
+		date.l = this.config.days[date.w];
+		date.m = date.n.toString().padStart(2, 0);
+		date.H = date.G.toString().padStart(2, 0);
+		date.U = Math.floor(date.v / 1000);
+		date.D = date.l.substr(0, this.config.D);
+		date.M = date.F.substr(0, this.config.M);
 		
 		// Render fragments
-		return this.renderVariables(template, f);
+		return this.renderVariables(template, date);
 	}	
 }
 
