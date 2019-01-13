@@ -1,8 +1,8 @@
 /*!
- * Luniverse Elements v2.10
+ * Luniverse Elements v2.11
  * ES2017 micro-templating engine
  * Licensed under the MIT license
- * Copyright (c) 2018 Lukas Jans
+ * Copyright (c) 2019 Lukas Jans
  * https://github.com/luniverse/elements-js
  */
 class Elements {
@@ -100,8 +100,7 @@ class Elements {
 		if(element instanceof Object) return this.renderRecursive(template, element);
 		
 		// Render scalar item (of list or hash)
-		if(context instanceof Array) return this.renderRecursive(template, {'.': element});
-		if(context instanceof Object) return this.renderRecursive(template, Object.assign({'.': element}, context));
+		if(context instanceof Object) return this.renderRecursive(template, {'.': element});
 	}
 
 	// Recursive renderer
