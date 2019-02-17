@@ -3,7 +3,7 @@
  * ECMAScript 2017 template processor
  * Licensed under the MIT license
  * Copyright (c) 2019 Lukas Jans
- * https://github.com/luniverse/elements-js
+ * https://github.com/luniverse/elements
  */
 class Elements {
 	

@@ -1,6 +1,6 @@
 # Luniverse Elements
 
-A [template processor](https://en.wikipedia.org/wiki/Template_processor) written in [ES2017](https://www.ecma-international.org/ecma-262/8.0/index.html). Learn more in the [**Wiki**][wiki].
+A [template processor](https://en.wikipedia.org/wiki/Template_processor) written in [ECMAScript 2017](https://www.ecma-international.org/ecma-262/8.0/index.html). Learn more in the [**Wiki**][wiki].
 
 
 ## Getting started
@@ -22,7 +22,7 @@ Now you are ready to make use of the renderer. Head over to the [**Wiki**][wiki]
 
 ## Links
 * Licensed under the [MIT License](LICENSE)
-* See also the [PHP equivalent](https://github.com/luniverse/elements-php)
+* See also the [PHP implementation](https://github.com/luniverse/elements-php)
 * Inspired by [mustache](https://mustache.github.io/)
 
-[wiki]: https://github.com/luniverse/elements-js/wiki
+[wiki]: https://github.com/luniverse/elements/wiki
