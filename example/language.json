@@ -1,0 +1,20 @@
+{
+	"WELCOME": "Glad to see you",
+	"DATE": "Todays's date",
+	
+	"FRIENDS": {
+		"TITLE": "Friendlist",
+		"EMPTY": "It seems like you don't have any friends yet.",
+		"TOTAL": "Number of friends"
+	},
+	
+	"MESSAGES": {
+		"TITLE": "Messages",
+		"EMPTY": "You have no new messages."
+	},
+	
+	"ORDERS": {
+		"TITLE": "Orders",
+		"EMPTY": "There are no open orders."
+	}
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Luniverse Elements - Demo</title>
+		
+		<script src="../elements.js"></script>
+		<script>
+			document.addEventListener('DOMContentLoaded', async () => {
+				
+				// Load template and localization
+				const template = await fetch('template.html').then(response => response.text());
+				const language = await fetch('language.json').then(response => response.json());
+				
+				// Render data
+				const cooked = Elements.render(template, {
+					title: 'Luniverse Elements - Demo',
+					login: true,
+					user: {
+						firstname: 'Foo',
+						lastname: 'Bar',
+					},
+					friends: ['Alice', 'Bob', 'Charles'],
+					messages: [{
+						title: 'New App',
+						from: 'Charles',
+						text: 'Hey there, great work on the app you launched yesterday!',
+					},{
+						title: 'Meeting at 8:00',
+						from: 'Alice',
+						text: 'I just wanted you to remember our meeting at 8:00.',
+					}],
+					orders: [],
+					now: new Date(),
+				});
+				
+				// Display result with rendered language
+				document.body.innerHTML = Elements.render(cooked, language);
+			});
+		</script>
+	</head>
+</html>

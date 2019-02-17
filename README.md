@@ -1,27 +1,28 @@
 # Luniverse Elements
-Micro-templating engine to render data in HTML templates.
-This is the JavaScript version, you might also be interested in [elements-php](https://github.com/Luniverse/elements-php).
 
-## Naming conventions
-Referring to the following as hash:
-```javascript
-'user': {
-	'name': 'Lu'
-}
-```
-Referring to the following as list:
-```javascript
-'user': [
-	{'name': 'Lu'},
-	{'name': 'Ju'}
-]
+A [template processor](https://en.wikipedia.org/wiki/Template_processor) written in [ES2017](https://www.ecma-international.org/ecma-262/8.0/index.html). Learn more in the [**Wiki**][wiki].
+
+
+## Getting started
+
+Import `elements.min.js` into your project. This can be done using a `script` tag in your documents `head`.
+
+```html
+<script src="elements.min.js"></script>
 ```
 
-## Basic concept
-A description about this library and how to use it is coming soon.
+Note that rendering templates can be especially useful in a [ServiceWorker](https://developers.google.com/web/fundamentals/primers/service-workers/). Import the script there using `importScripts`:
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+```javascript
+self.importScripts('elements.min.js');
+```
 
-## Acknowledgments
-* Inspired by [Mustache](https://mustache.github.io/)
+Now you are ready to make use of the renderer. Head over to the [**Wiki**][wiki] for a complete documentation.
+
+
+## Links
+* Licensed under the [MIT License](LICENSE)
+* See also the [PHP equivalent](https://github.com/luniverse/elements-php)
+* Inspired by [mustache](https://mustache.github.io/)
+
+[wiki]: https://github.com/luniverse/elements-js/wiki

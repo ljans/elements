@@ -1,16 +1,41 @@
 /*!
- * Luniverse Elements v2.11
- * ES2017 micro-templating engine
+ * Luniverse Elements v3.0
+ * ECMAScript 2017 template processor
  * Licensed under the MIT license
  * Copyright (c) 2019 Lukas Jans
  * https://github.com/luniverse/elements-js
  */
 class Elements {
 	
+	// Configure tag enclosing
+	get open() { return this.escape(this.config.open || this.constructor.open || '{{'); }
+	get close() { return this.escape(this.config.close || this.constructor.close || '}}'); }
+	set open(open) { this.config.open = open; }
+	set close(close) { this.config.close = close; }
+	
 	// Constructor
 	constructor(template, config={}) {
 		this.template = template;
-		this.config = Object.assign({}, Elements.config, config);
+		this.config = config;
+	}
+	
+	// Search named context
+	context(name, data, fallback) {
+		
+		// Use local context
+		if(name == '.') return data;
+		
+		// Traverse provided data
+		let context = data;
+		for(const part of name.split('.')) {
+			context = context[part];
+			
+			// Use a fallback when the context is not found
+			if(typeof context == 'undefined') {
+				if(fallback) context = this.context(name, fallback);
+				break;
+			}
+		} return context;
 	}
 	
 	// Escape regex pattern
@@ -21,135 +46,129 @@ class Elements {
 	// Check whether value is considered empty
 	empty(value) {
 		if(value instanceof Function || value instanceof Date) return false;
-		if(value instanceof Object) return Object.keys(value).length == 0;
+		if(value instanceof Object) return !Object.keys(value).length;
 		return !value;
 	}
 	
 	// Clean comments and whitespace
 	clean(template) {
-		const pattern = new RegExp(this.escape(this.config.open)+'!.+?'+this.escape(this.config.close), 'g');
+		const pattern = new RegExp(this.open+'!.+?'+this.close, 'g');
 		return template.replace(pattern, '').replace(/[\r\n\t]/g, '');
 	}
 	
 	// Static renderer
 	static render(template, data) {
-		return new Elements(template).render(data);
+		return new this(template).render(data);
 	}
-
+	
 	// Render data
-	render(data) {
-		const template = this.renderElement(this.template, data);
+	render(data={}) {
+		this.data = data;
+		const template = this.renderRecursive(this.template, data);
 		return this.clean(template);
 	}
-
-	// Render sections
+	
+	/*
+	 * This method renders all sections in the first dimension.
+	 * It matches the names of sections against the current or global data.
+	 * If the found context meets the section's condition, it is used to render the content.
+	 * Otherwise, the section is deleted.
+	 * Nested sections are ignored by this method.
+	 */
 	renderSections(template, data) {
-		
-		// Match regex
-		const pattern = new RegExp(this.escape(this.config.open)+'(\\^|#)(.+?)'+this.escape(this.config.close)+'((?:\\s|\\S)+?)'+this.escape(this.config.open)+'\/\\2'+this.escape(this.config.close), 'g');
-		return template.replace(pattern, ($null, type, key, content) => {
+		const pattern = new RegExp(this.open+'(\\^|#)(.+?)'+this.close+'((?:\\s|\\S)+?)'+this.open+'\/\\2'+this.close, 'g');
+		return template.replace(pattern, ($null, type, name, content) => {
 			
-			// Determine value
-			const value = data[key];
-	
-			// Render value for normal section with non-empty value
-			if(type == '#' && !this.empty(value)) return this.renderElement(content, value, data);
-	
-			// Adopt content for inverted section with empty value
-			if(type == '^' && this.empty(value)) return this.renderRecursive(content, data);
+			/*
+			 * Search the named context in the current data.
+			 * Use the global context as fallback for low-dimensional sections nested in higher-dimensional sections.
+			 * These are skipped when rendering their dimension, because at this time they are only the content of a section with higher dimension.
+			 * So if a sections context cannot be found in the current data, it is searched in the global data.
+			 */
+			const context = this.context(name, data, this.data);
 			
-			// Skip content in other cases
+			// Regular section with non-empty context or inverted section with empty context
+			if(type == '#' ^ this.empty(context)) return this.renderRecursive(content, context);
+			
+			// Regular section with empty context or inverted section with non-empty context
 			return '';
-		});
+		});	
 	}
+	
+	/*
+	 * This method renders all placeholders in the first dimension.
+	 * It matches the names of found placeholders against the current or global data.
+	 * If the found context is scalar, it is used as replacement.
+	 * Otherwise, the placeholder is ignored.
+	 */
+	renderPlaceholders(template, data) {
+		const pattern = new RegExp(this.open+'(.+?)'+this.close, 'g');
+		return template.replace(pattern, (raw, name) => {
 			
-	// Render variables
-	renderVariables(template, data, prefix='') {
-		
-		// Render size of list
-		if(data instanceof Array) data = {length: data.length};
-		
-		// Iterate over values
-		for(const [key, value] of Object.entries(data)) {
-			
-			// Render next dimension of hash with prefix
-			if(value instanceof Object) template = this.renderVariables(template, value, prefix+key+'.');
+			/*
+			 * Search the named context in the current data.
+			 * There is no need to fall back to the global data.
+			 * Placeholders in sections are not skipped but even rendered with higher priority.
+			 * This happens, because sections are rendered recursively through all dimensions first.
+			 * After that, replacing starts from the highest dimension backwards.
+			 * So if a placeholder is ignored, it can be rendered later in a lower dimension.
+			 */
+			const context = this.context(name, data);
 			
 			// Render scalar value
-			else {
-				const pattern = new RegExp(this.escape(this.config.open + prefix + key + this.config.close), 'g');
-				template = template.replace(pattern, value);
-			}
-		}
-		return template;
-	}	
+			if(typeof context == 'string' || typeof context == 'number') return context;
+			
+			// Ignore placeholder without context
+			return raw;
+		});
+	}
 	
-	// Render element
-	renderElement(template, element, context={}) {
+	/*
+	 * This method renders the data recursively.
+	 * It checks for the data type and passes it to subsequent renderers.
+	 */
+	renderRecursive(template, data) {
 		
-		// Call lambda
-		if(element instanceof Function) return element(template);
+		// Invoke lambda
+		if(data instanceof Function) return data(template);
 		
-		// Render list
-		if(element instanceof Array) return this.renderList(template, element);
+		// Render array
+		if(data instanceof Array && data.length) return this.renderArray(template, data);
 		
 		// Render date
-		if(element instanceof Date) return this.renderDate(template, element);
-	
-		// Render hash
-		if(element instanceof Object) return this.renderRecursive(template, element);
+		if(data instanceof Date) return this.renderDate(template, data);
 		
-		// Render scalar item (of list or hash)
-		if(context instanceof Object) return this.renderRecursive(template, {'.': element});
-	}
-
-	// Recursive renderer
-	renderRecursive(template, data) {
-		template = this.renderVariables(template, data);
+		/*
+		 * At this point, data is scalar or an object and has to be checked against placeholders and sections.
+		 * - A scalar may occur as placeholder or conditional section (both times only '.' possible)
+		 * - An object may occur as section or container for scalar values
+		 */
 		template = this.renderSections(template, data);
+		template = this.renderPlaceholders(template, data);
 		return template;
 	}
 	
-	// Map list on template
-	renderList(template, list) {
-		return list.map(element => this.renderElement(template, element, list)).join('');
+	/*
+	 * This method maps an array on a template.
+	 * The template is rendered recursively with each item.
+	 */
+	renderArray(template, array) {
+		return array.map(item => this.renderRecursive(template, item)).join('');
 	}
 	
 	// Render date
 	renderDate(template, date) {
-		
-		// Setup native fragments
-		date.j = date.getDate();
-		date.w = date.getDay();
-		date.n = date.getMonth() + 1;
-		date.F = this.config.months[date.getMonth()];
-		date.Y = date.getFullYear();
-		date.G = date.getHours();
-		date.i = date.getMinutes().toString().padStart(2, 0);
-		date.s = date.getSeconds().toString().padStart(2, 0);
-		date.v = date.getTime();
-		
-		// Add derived fragments
-		date.d = date.j.toString().padStart(2, 0);
-		date.N = date.w + 1;
-		date.l = this.config.days[date.w];
-		date.m = date.n.toString().padStart(2, 0);
-		date.H = date.G.toString().padStart(2, 0);
-		date.U = Math.floor(date.v / 1000);
-		date.D = date.l.substr(0, this.config.D);
-		date.M = date.F.substr(0, this.config.M);
-		
-		// Render fragments
-		return this.renderVariables(template, date);
-	}	
-}
-
-// Default configuration
-Elements.config = {
-	D: 3,
-	M: 3,
-	open: '{{',
-	close: '}}',
-	days: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
-	months: ['January','February','March','April','May','June','July','August','September','October','November','December']
+		return this.renderPlaceholders(template, {
+			d: date.getDate().toString().padStart(2, 0),
+			j: date.getDate(),
+			w: date.getDay(),
+			m: (date.getMonth() + 1).toString().padStart(2, 0),
+			n: date.getMonth() + 1,
+			Y: date.getFullYear(),
+			G: date.getHours(),
+			H: date.getHours().toString().padStart(2, 0),
+			i: date.getMinutes().toString().padStart(2, 0),
+			s: date.getSeconds().toString().padStart(2, 0),
+		});
+	}
 }

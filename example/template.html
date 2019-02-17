@@ -1,0 +1,67 @@
+<h1>{{title}}</h1>
+
+{{#login}}
+	<p>{{WELCOME}}, {{user.firstname}} {{user.lastname}}!</p>
+{{/login}}
+
+{{^login}}
+	<p>Not logged in.</p>
+{{/login}}
+
+<p>{{DATE}}: {{#now}}{{Y}}-{{m}}-{{d}}{{/now}}</p>
+
+<!-- Friendlist -->
+<section>
+	<h2>{{FRIENDS.TITLE}}</h2>
+	
+	{{^friends.length}}
+		<p>{{FRIENDS.EMPTY}}</p>
+	{{/friends.length}}
+	
+	{{#friends.length}}
+		<p>{{FRIENDS.TOTAL}}: {{friends.length}}</p>
+		<ul>
+			{{#friends}}
+				<li>{{.}}</li>
+			{{/friends}}
+		</ul>
+	{{/friends.length}}
+</section>
+
+<!-- Messages -->
+<section>
+	<h2>{{MESSAGES.TITLE}}</h2>
+	
+	{{^messages.length}}
+		<p>{{MESSAGES.EMPTY}}</p>
+	{{/messages.length}}
+	
+	{{#messages.length}}
+		<ul>
+			{{#messages}}
+				<li>
+					<h3>{{title}}</h3>
+					<i>From: {{from}}</i>
+					<p>{{text}}</p>
+				</li>
+			{{/messages}}
+		</ul>
+	{{/messages.length}}
+</section>
+
+<!-- Orders -->
+<section>
+	<h2>{{ORDERS.TITLE}}</h2>
+	
+	{{^orders.length}}
+		<p>{{ORDERS.EMPTY}}</p>
+	{{/orders.length}}
+	
+	{{#orders.length}}
+		<ul>
+			{{#orders}}
+				<li>{{.}}</li>
+			{{/orders}}
+		</ul>
+	{{/orders.length}}
+</section>
