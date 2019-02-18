@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v3.0
+ * Luniverse Elements v3.1
  * ECMAScript 2017 template processor
  * Licensed under the MIT license
  * Copyright (c) 2019 Lukas Jans
@@ -87,10 +87,13 @@ class Elements {
 			 */
 			const context = this.context(name, data, this.data);
 			
-			// Regular section with non-empty context or inverted section with empty context
-			if(type == '#' ^ this.empty(context)) return this.renderRecursive(content, context);
+			// Render a regular section with its non-empty context
+			if(type == '#' && !this.empty(context)) return this.renderRecursive(content, context);
 			
-			// Regular section with empty context or inverted section with non-empty context
+			// Render an inverted section with the current context
+			if(type == '^' && this.empty(context)) return this.renderRecursive(content, data);
+			
+			// Delete a regular section with empty context or an inverted section with non-empty context
 			return '';
 		});	
 	}
@@ -102,7 +105,7 @@ class Elements {
 	 * Otherwise, the placeholder is ignored.
 	 */
 	renderPlaceholders(template, data) {
-		const pattern = new RegExp(this.open+'(.+?)'+this.close, 'g');
+		const pattern = new RegExp(this.open+'([\\w\\.]+?)'+this.close, 'g');
 		return template.replace(pattern, (raw, name) => {
 			
 			/*
