@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v3.1
+ * Luniverse Elements v3.2
  * ECMAScript 2017 template processor
  * Licensed under the MIT license
  * Copyright (c) 2019 Lukas Jans
@@ -63,29 +63,29 @@ class Elements {
 	
 	// Render data
 	render(data={}) {
-		const template = this.renderRecursive(this.template, data);
+		const template = this.renderRecursive(this.template, [data]);
 		return this.clean(template);
 	}
 	
 	/*
-	 * This method renders all sections in the first dimension.
+	 * This method renders all sections in one dimension.
 	 * It searches the path for the named context.
 	 * If the found context meets the section's condition, it is used to render the content.
 	 * Otherwise, the section is deleted.
-	 * Nested sections are ignored by this method.
+	 * Nested sections are ignored in this dimension.
 	 */
-	renderSections(template, data, path) {
+	renderSections(template, path) {
 		const pattern = new RegExp(this.open+'(\\^|#)(.+?)'+this.close+'((?:\\s|\\S)+?)'+this.open+'\/\\2'+this.close, 'g');
 		return template.replace(pattern, ($null, type, name, content) => {
 			
 			// Search the named context
 			const context = this.context(name, path);
 			
-			// Render a regular section with its non-empty context
-			if(type == '#' && !this.empty(context)) return this.renderRecursive(content, context, path);
+			// Render a regular section using its non-empty context for the next dimension
+			if(type == '#' && !this.empty(context)) return this.renderRecursive(content, path, context);
 			
-			// Render an inverted section with the current context
-			if(type == '^' && this.empty(context)) return this.renderRecursive(content, data, path);
+			// Render an inverted section with an empty context in the same dimension
+			if(type == '^' && this.empty(context)) return this.renderRecursive(content, path);
 			
 			// Delete a regular section with empty context or an inverted section with non-empty context
 			return '';
@@ -93,12 +93,12 @@ class Elements {
 	}
 	
 	/*
-	 * This method renders all placeholders in the first dimension.
+	 * This method renders all placeholders.
 	 * It searches the path for the named context.
 	 * If the found context is scalar, it is used as replacement.
 	 * Otherwise, the placeholder is ignored.
 	 */
-	renderPlaceholders(template, data, path) {
+	renderPlaceholders(template, path) {
 		const pattern = new RegExp(this.open+'([\\w\\.]+?)'+this.close, 'g');
 		return template.replace(pattern, (raw, name) => {
 			
@@ -116,30 +116,32 @@ class Elements {
 	/*
 	 * This method renders the data recursively.
 	 * It checks for the data type and passes it to subsequent renderers.
-	 * The context is added to a new fork of the path
+	 * If a context is passed, it is used as next dimension.
 	 */
-	renderRecursive(template, context, path=[]) {
+	renderRecursive(template, path, context=null) {
 		
-		// Use a new fork for this context.
+		// Fork the path (otherwise it's global)
 		const fork = path.slice(0);
-		fork.unshift(context);
+		
+		// Use the passed context as next dimension
+		if(context) fork.unshift(context);
 		
 		// Invoke lambda
-		if(context instanceof Function) return context(template);
+		if(fork[0] instanceof Function) return fork[0](template);
 		
 		// Render array
-		if(context instanceof Array && context.length) return this.renderArray(template, context, fork);
+		if(fork[0] instanceof Array && fork[0].length) return this.renderArray(template, fork);
 		
 		// Render date
-		if(context instanceof Date) return this.renderDate(template, context);
+		if(fork[0] instanceof Date) return this.renderDate(template, fork);
 		
 		/*
-		 * At this point, the context is a scalar or an object and has to be checked against placeholders and sections.
+		 * At this point, fork[0] is a scalar or an object and has to be checked against placeholders and sections.
 		 * - A scalar may occur as placeholder or conditional section (both times only '.' possible)
 		 * - An object may occur as section or container for scalar values
 		 */
-		template = this.renderSections(template, context, fork);
-		template = this.renderPlaceholders(template, context, fork);
+		template = this.renderSections(template, fork);
+		template = this.renderPlaceholders(template, fork);
 		return template;
 	}
 	
@@ -147,23 +149,24 @@ class Elements {
 	 * This method maps an array on a template.
 	 * The template is rendered recursively with each item.
 	 */
-	renderArray(template, array, path) {
-		return array.map(item => this.renderRecursive(template, item, path)).join('');
+	renderArray(template, path) {
+		return path[0].map(item => this.renderRecursive(template, path, item)).join('');
 	}
 	
 	// Render date
-	renderDate(template, date) {
-		return this.renderRecursive(template, {
-			d: date.getDate().toString().padStart(2, 0),
-			j: date.getDate(),
-			w: date.getDay(),
-			m: (date.getMonth() + 1).toString().padStart(2, 0),
-			n: date.getMonth() + 1,
-			Y: date.getFullYear(),
-			G: date.getHours(),
-			H: date.getHours().toString().padStart(2, 0),
-			i: date.getMinutes().toString().padStart(2, 0),
-			s: date.getSeconds().toString().padStart(2, 0),
+	renderDate(template, path) {
+		const d = path[0];
+		return this.renderRecursive(template, path, {
+			d: d.getDate().toString().padStart(2, 0),
+			j: d.getDate(),
+			w: d.getDay(),
+			m: (d.getMonth() + 1).toString().padStart(2, 0),
+			n: d.getMonth() + 1,
+			Y: d.getFullYear(),
+			G: d.getHours(),
+			H: d.getHours().toString().padStart(2, 0),
+			i: d.getMinutes().toString().padStart(2, 0),
+			s: d.getSeconds().toString().padStart(2, 0),
 		});
 	}
 }
