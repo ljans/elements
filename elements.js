@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v3.2
+ * Luniverse Elements v3.3
  * ECMAScript 2017 template processor
  * Licensed under the MIT license
  * Copyright (c) 2019 Lukas Jans
@@ -118,13 +118,13 @@ class Elements {
 	 * It checks for the data type and passes it to subsequent renderers.
 	 * If a context is passed, it is used as next dimension.
 	 */
-	renderRecursive(template, path, context=null) {
+	renderRecursive(template, path, context) {
 		
 		// Fork the path (otherwise it's global)
 		const fork = path.slice(0);
 		
 		// Use the passed context as next dimension
-		if(context) fork.unshift(context);
+		if(typeof context != 'undefined') fork.unshift(context);
 		
 		// Invoke lambda
 		if(fork[0] instanceof Function) return fork[0](template);

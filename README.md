@@ -2,6 +2,8 @@
 
 A [template processor](https://en.wikipedia.org/wiki/Template_processor) written in [ECMAScript 2017](https://www.ecma-international.org/ecma-262/8.0/index.html). Learn more in the [**Wiki**][wiki].
 
+For a working example see the contents of [example](example).
+
 
 ## Getting started
 
