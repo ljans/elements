@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v3.3
+ * Luniverse Elements v3.4
  * ECMAScript 2017 template processor
  * Licensed under the MIT license
  * Copyright (c) 2019 Lukas Jans
@@ -14,8 +14,7 @@ class Elements {
 	set close(close) { this.config.close = close; }
 	
 	// Constructor
-	constructor(template, config={}) {
-		this.template = template;
+	constructor(config={}) {
 		this.config = config;
 	}
 	
@@ -58,13 +57,13 @@ class Elements {
 	
 	// Static renderer
 	static render(template, data) {
-		return new this(template).render(data);
+		return new this().render(template, data);
 	}
 	
 	// Render data
-	render(data={}) {
-		const template = this.renderRecursive(this.template, [data]);
-		return this.clean(template);
+	render(template, data={}) {
+		const result = this.renderRecursive(template, [data]);
+		return this.clean(result);
 	}
 	
 	/*

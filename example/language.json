@@ -1,20 +1,20 @@
 {
-	"WELCOME": "Glad to see you",
-	"DATE": "Todays's date",
+	"welcome": "Glad to see you",
+	"date": "Today is",
 	
-	"FRIENDS": {
-		"TITLE": "Friendlist",
-		"EMPTY": "It seems like you don't have any friends yet.",
-		"TOTAL": "Number of friends"
+	"friends": {
+		"title": "Friendlist",
+		"empty": "It seems like you don't have any friends yet.",
+		"total": "Number of friends"
 	},
 	
-	"MESSAGES": {
-		"TITLE": "Messages",
-		"EMPTY": "You have no new messages."
+	"messages": {
+		"title": "Messages",
+		"empty": "You have no new messages."
 	},
 	
-	"ORDERS": {
-		"TITLE": "Orders",
-		"EMPTY": "There are no open orders."
+	"orders": {
+		"title": "Orders",
+		"empty": "There are no open orders."
 	}
 }

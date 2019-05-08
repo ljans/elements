@@ -35,7 +35,7 @@
 				});
 				
 				// Display result with rendered language
-				document.body.innerHTML = Elements.render(cooked, language);
+				document.body.innerHTML = new Elements({open: '[[', close: ']]'}).render(cooked, language);
 			});
 		</script>
 	</head>

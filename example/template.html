@@ -1,25 +1,25 @@
 <h1>{{title}}</h1>
 
 {{#login}}
-	<p>{{WELCOME}}, {{user.firstname}} {{user.lastname}}!</p>
+	<p>[[welcome]], {{user.firstname}} {{user.lastname}}!</p>
 {{/login}}
 
 {{^login}}
 	<p>Not logged in.</p>
 {{/login}}
 
-<p>{{DATE}}: {{#now}}{{Y}}-{{m}}-{{d}}{{/now}}</p>
+<p>[[date]]: {{#now}}{{Y}}-{{m}}-{{d}}{{/now}}</p>
 
 <!-- Friendlist -->
 <section>
-	<h2>{{FRIENDS.TITLE}}</h2>
+	<h2>[[friends.title]]</h2>
 	
 	{{^friends.length}}
-		<p>{{FRIENDS.EMPTY}}</p>
+		<p>[[friends.empty]]</p>
 	{{/friends.length}}
 	
 	{{#friends.length}}
-		<p>{{FRIENDS.TOTAL}}: {{friends.length}}</p>
+		<p>[[friends.total]]: {{friends.length}}</p>
 		<ul>
 			{{#friends}}
 				<li>{{.}}</li>
@@ -30,10 +30,10 @@
 
 <!-- Messages -->
 <section>
-	<h2>{{MESSAGES.TITLE}}</h2>
+	<h2>[[messages.title]]</h2>
 	
 	{{^messages.length}}
-		<p>{{MESSAGES.EMPTY}}</p>
+		<p>[[messages.empty]]</p>
 	{{/messages.length}}
 	
 	{{#messages.length}}
@@ -51,10 +51,10 @@
 
 <!-- Orders -->
 <section>
-	<h2>{{ORDERS.TITLE}}</h2>
+	<h2>[[orders.title]]</h2>
 	
 	{{^orders.length}}
-		<p>{{ORDERS.EMPTY}}</p>
+		<p>[[orders.empty]]</p>
 	{{/orders.length}}
 	
 	{{#orders.length}}
