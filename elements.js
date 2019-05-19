@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v3.4
+ * Luniverse Elements v3.5
  * ECMAScript 2017 template processor
  * Licensed under the MIT license
  * Copyright (c) 2019 Lukas Jans
@@ -49,12 +49,6 @@ class Elements {
 		return !value;
 	}
 	
-	// Clean comments and whitespace
-	clean(template) {
-		const pattern = new RegExp(this.open+'!.+?'+this.close, 'g');
-		return template.replace(pattern, '').replace(/[\r\n\t]/g, '');
-	}
-	
 	// Static renderer
 	static render(template, data) {
 		return new this().render(template, data);
@@ -63,7 +57,13 @@ class Elements {
 	// Render data
 	render(template, data={}) {
 		const result = this.renderRecursive(template, [data]);
-		return this.clean(result);
+		return this.renderComments(result);
+	}
+	
+	// Remove comments
+	renderComments(template) {
+		const pattern = new RegExp(this.open+'!.+?'+this.close, 'g');
+		return template.replace(pattern, '');
 	}
 	
 	/*
