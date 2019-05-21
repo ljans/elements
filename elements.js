@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v3.5
+ * Luniverse Elements v3.6
  * ECMAScript 2017 template processor
  * Licensed under the MIT license
  * Copyright (c) 2019 Lukas Jans
@@ -18,7 +18,11 @@ class Elements {
 		this.config = config;
 	}
 	
-	// Search named context in path
+	/*
+	 * Search named context in path.
+	 * All levels of the path have to be checked, because rendering at a higher level ignores nested content.
+	 * (A low-level section may contain a high-level section)
+	 */
 	context(name, path) {
 		traversal: for(let context of path) {
 			
@@ -26,10 +30,18 @@ class Elements {
 			if(name == '.') return context;
 			
 			// Match context against name
-			for(const part of name.split('.')) {
-				context = context[part];
+			for(const level of name.split('.')) {
 				
-				// Use next item in path if context does not match
+				/*
+				 * If the value of this context is null on purpose, directly trigger 
+				 * inverted sections instead of searching for the context on a higher level.
+				 */
+				if(context == null) return;
+				
+				// Check the next level
+				context = context[level];
+				
+				// Continue path traversal at mismatch
 				if(typeof context == 'undefined') continue traversal;
 				
 			// Return fully matched context
