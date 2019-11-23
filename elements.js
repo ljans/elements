@@ -20,8 +20,8 @@ class Elements {
 	
 	/*
 	 * Search named context in path.
-	 * All levels of the path have to be checked, because rendering at a higher level ignores nested content.
-	 * (A low-level section may contain a high-level section)
+	 * All levels of the path have to be checked, because rendering at a lower level ignores nested content.
+	 * (A high-level section may contain a low-level section that was previously skipped)
 	 */
 	context(name, path) {
 		traversal: for(let context of path) {
@@ -80,11 +80,11 @@ class Elements {
 	}
 	
 	/*
-	 * This method renders all sections in one dimension.
+	 * This method renders all sections in the current level.
 	 * It searches the path for the named context.
 	 * If the found context meets the section's condition, it is used to render the content.
 	 * Otherwise, the section is deleted.
-	 * Nested sections are ignored in this dimension.
+	 * Nested sections are ignored for now, but will get recursively rendered later.
 	 */
 	renderSections(template, path) {
 		const pattern = new RegExp(this.open+'(\\^|#)(.+?)'+this.close+'((?:\\s|\\S)+?)'+this.open+'\/\\2'+this.close, 'g');
@@ -93,10 +93,10 @@ class Elements {
 			// Search the named context
 			const context = this.context(name, path);
 			
-			// Render a regular section using its non-empty context for the next dimension
+			// Render a regular section using its non-empty context for the next level
 			if(type == '#' && !this.isEmpty(context)) return this.renderRecursive(content, path, context);
 			
-			// Render an inverted section with an empty context in the same dimension
+			// Render an inverted section with an empty context in the same level
 			if(type == '^' && this.isEmpty(context)) return this.renderRecursive(content, path);
 			
 			// Delete a regular section with empty context or an inverted section with non-empty context
@@ -128,14 +128,14 @@ class Elements {
 	/*
 	 * This method renders the data recursively.
 	 * It checks for the data type and passes it to subsequent renderers.
-	 * If a context is passed, it is used as next dimension.
+	 * If a context is passed, it is used as next level.
 	 */
 	renderRecursive(template, path, context) {
 		
 		// Fork the path (otherwise it's global)
 		const fork = path.slice(0);
 		
-		// Use the passed context as next dimension
+		// Use the passed context as next level
 		if(typeof context != 'undefined') fork.unshift(context);
 		
 		// Invoke lambda
