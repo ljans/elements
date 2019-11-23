@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v3.6
+ * Luniverse Elements v3.7
  * ECMAScript 2017 template processor
  * Licensed under the MIT license
  * Copyright (c) 2019 Lukas Jans
@@ -55,9 +55,10 @@ class Elements {
 	}
 	
 	// Check whether value is considered empty
-	empty(value) {
+	isEmpty(value) {
 		if(value instanceof Function || value instanceof Date) return false;
-		if(value instanceof Object) return !Object.keys(value).length;
+		if(value instanceof Array) return !value.length;
+		if(value instanceof Object) return !Object.getOwnPropertyNames(value).length;
 		return !value;
 	}
 	
@@ -93,10 +94,10 @@ class Elements {
 			const context = this.context(name, path);
 			
 			// Render a regular section using its non-empty context for the next dimension
-			if(type == '#' && !this.empty(context)) return this.renderRecursive(content, path, context);
+			if(type == '#' && !this.isEmpty(context)) return this.renderRecursive(content, path, context);
 			
 			// Render an inverted section with an empty context in the same dimension
-			if(type == '^' && this.empty(context)) return this.renderRecursive(content, path);
+			if(type == '^' && this.isEmpty(context)) return this.renderRecursive(content, path);
 			
 			// Delete a regular section with empty context or an inverted section with non-empty context
 			return '';
