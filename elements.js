@@ -1,5 +1,5 @@
 /*!
- * Luniverse Elements v3.7
+ * Luniverse Elements v3.8
  * ECMAScript 2017 template processor
  * Licensed under the MIT license
  * Copyright (c) 2019 Lukas Jans
@@ -129,14 +129,16 @@ class Elements {
 	 * This method renders the data recursively.
 	 * It checks for the data type and passes it to subsequent renderers.
 	 * If a context is passed, it is used as next level.
+	 * Use a variadic function to support passing no context (neither null nor undefined).
+	 * This results in an empty array, otherwise the context is the arrays first and only element.
 	 */
-	renderRecursive(template, path, context) {
+	renderRecursive(template, path, ...context) {
 		
 		// Fork the path (otherwise it's global)
 		const fork = path.slice(0);
 		
 		// Use the passed context as next level
-		if(typeof context != 'undefined') fork.unshift(context);
+		if(context.length) fork.unshift(context[0]);
 		
 		// Invoke lambda
 		if(fork[0] instanceof Function) return fork[0](template);
