@@ -2,15 +2,15 @@
 A template processor written in JavaScript. For a showcase see the contents of [example](example). Learn more in the [Wiki][wiki].
 
 ### Getting started
-Import [`elements.min.js`](elements.min.js) into your project. This can be done using a `<script>` tag in your documents `<head>`.
+Import [`elements.min.js`](elements.min.js) into your project. This can be done using a `<script>` tag in your documents `<head>`:
 ```html
 <script src="elements.min.js"></script>
 ```
-Note that rendering templates can be especially useful in a [ServiceWorker](https://developers.google.com/web/fundamentals/primers/service-workers/). Import the script there using `importScripts`:
+Note that rendering templates can be especially useful in a [ServiceWorker](https://developers.google.com/web/fundamentals/primers/service-workers/). Import the script there using:
 ```javascript
 self.importScripts('elements.min.js');
 ```
-Now you are ready to make use of the renderer. Head over to the [**Wiki**][wiki] for a complete documentation.
+Now you are ready to make use of the renderer. Head over to the [Wiki][wiki] for a complete documentation.
 
 ### Links
 * Licensed under the [MIT License](LICENSE)
