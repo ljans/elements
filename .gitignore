@@ -1,3 +1,2 @@
-# Ignore DW notes
-_notes/
+/.vscode/
 /test.html
