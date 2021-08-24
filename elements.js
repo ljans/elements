@@ -2,8 +2,8 @@
  * Luniverse Elements v3.8
  * ECMAScript 2017 template processor
  * Licensed under the MIT license
- * Copyright (c) 2019 Lukas Jans
- * https://github.com/luniverse/elements
+ * Copyright (c) 2021 Lukas Jans
+ * https://github.com/ljans/elements
  */
 class Elements {
 	

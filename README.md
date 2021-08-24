@@ -17,4 +17,4 @@ Now you are ready to make use of the renderer. Head over to the [Wiki][wiki] for
 * See also the [PHP port](https://gist.github.com/ljans/0efe9aff7c0a434d5f9e04a36c52e7ad)
 * Inspired by [mustache](https://mustache.github.io/)
 
-[wiki]: https://github.com/luniverse/elements/wiki
+[wiki]: https://github.com/ljans/elements/wiki
