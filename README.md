@@ -1,3 +1,5 @@
+**Deprecation note:** Elements has evolved &ndash; check out the [Colony](https://github.com/ljans/colony) processor for even simpler templates!
+
 # Elements
 A template processor written in JavaScript. For a showcase see the contents of [example](example). Learn more in the [Wiki][wiki].
 
